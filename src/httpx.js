@@ -1,5 +1,11 @@
 import http from 'k6/http';
-import { Counter, Rate } from 'k6/metrics';
+
+function isHttpUrl(obj){  // detects type of http.url`http://example.com/{$id}`
+  return typeof obj == 'object' 
+    && 'name' in obj 
+    && 'url' in obj
+    && 'clean_url' in obj
+}
 
 class Request {
   constructor(method, url, params) {
@@ -9,6 +15,12 @@ class Request {
     this.body = params['body'] || null;
     delete params['body'];
     this.params = params || {};
+
+    if(isHttpUrl(url)){
+      this.url = url.url
+      this.addTag('name', url.name)
+    }
+
   }
 
   addHeader(name, value) {
@@ -164,6 +176,11 @@ class Httpx {
     // console.log(`start ${method} ${url}`)
 
     params = this._getMergedSessionParams(params);
+
+    if(isHttpUrl(url)){
+      params.tags['name'] = url.name
+      url = url.url
+    }
 
     let start_t = new Date();
     let resp = http.request(method, this.baseURL + url, body, params);
