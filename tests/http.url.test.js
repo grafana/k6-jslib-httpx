@@ -31,4 +31,12 @@ export default function() {
       });
     });
 
+    describe('02. Absolute URLs override the baseURL', (t) => {
+      let relativeURL = session.get('/public/crocodiles/1'); //
+      let absoluteURL = session.get('https://httpbin.test.k6.io/get'); // should work.
+
+      t.expect(relativeURL.status).as("relative URL").toEqual(200);
+      t.expect(absoluteURL.status).as("absolute URL").toEqual(200);
+    });
+
 }

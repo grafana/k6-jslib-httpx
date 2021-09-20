@@ -7,6 +7,10 @@ function isHttpUrl(obj){  // detects type of http.url`http://example.com/{$id}`
     && 'clean_url' in obj
 }
 
+function isAbsoluteUrl(url) {
+  return url.startsWith('http');
+}
+
 class Request {
   constructor(method, url, params) {
     params = params || {};
@@ -178,12 +182,16 @@ class Httpx {
     params = this._getMergedSessionParams(params);
 
     if(isHttpUrl(url)){
-      params.tags['name'] = url.name
+      params.tags['name'] = url.name;
       url = url.url
     }
 
+    if(!isAbsoluteUrl(url)){
+      url = this.baseURL + url;
+    }
+
     let start_t = new Date();
-    let resp = http.request(method, this.baseURL + url, body, params);
+    let resp = http.request(method, url, body, params);
     let end_t = new Date();
 
     this.postRequestHook(resp, params, start_t, end_t);
