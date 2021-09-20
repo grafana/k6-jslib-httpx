@@ -178,27 +178,20 @@ class Httpx {
 
   request(method, url, body, params) {
     // console.log(`start ${method} ${url}`)
-    let finalUrl;
 
     params = this._getMergedSessionParams(params);
 
     if(isHttpUrl(url)){
-      params.tags['name'] = url.name
-      if(isAbsoluteUrl(url.url)) {
-        finalUrl = url.url
-      } else {
-        finalUrl = this.baseURL + url.url;
-      }
-    } else {
-      if(isAbsoluteUrl(url)){
-        finalUrl = url;
-      } else {
-        finalUrl = this.baseURL + url;
-      }
+      params.tags['name'] = url.name;
+      url = url.url
+    }
+
+    if(!isAbsoluteUrl(url)){
+      url = this.baseURL + url;
     }
 
     let start_t = new Date();
-    let resp = http.request(method, finalUrl, body, params);
+    let resp = http.request(method, url, body, params);
     let end_t = new Date();
 
     this.postRequestHook(resp, params, start_t, end_t);
