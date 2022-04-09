@@ -98,7 +98,7 @@ class Httpx {
       delete otherK6Params[o];
     });
 
-    Object.assign(this.k6params, otherK6Params);
+    this.k6params = Object.assign(this.k6params, otherK6Params);
 
     this.baseURL = baseURL;
     this.lastRequest = {
