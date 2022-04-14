@@ -10,9 +10,9 @@ Download the latest release from https://jslib.k6.io/
 
 ```javascript
 import { test } from 'https://jslib.k6.io/functional/0.0.1/index.js';
-import { Httpx } from 'https://jslib.k6.io/httpx/0.0.3/index.js';
+import { Httpx } from 'https://jslib.k6.io/httpx/0.0.6/index.js';
 import { randomIntBetween, 
-         randomItem } from "https://jslib.k6.io/k6-utils/1.0.0/index.js";
+         randomItem } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 
 const USERNAME = `user${randomIntBetween(1, 100000)}@example.com`;  // random email address
 const PASSWORD = 'superCroc2021';
