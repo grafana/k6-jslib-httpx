@@ -197,6 +197,25 @@ class Httpx {
     this.postRequestHook(resp, params, start_t, end_t);
     return resp;
   }
+  async asyncRequest(method, url, body, params) {
+    params = this._getMergedSessionParams(params);
+
+    if (isHttpUrl(url)) {
+        params.tags['name'] = url.name;
+        url = url.url
+    }
+
+    if (!isAbsoluteUrl(url)) {
+        url = this.baseURL + url;
+    }
+
+    let start_t = new Date();
+    let resp = await http.asyncRequest(method, url, body, params);
+    let end_t = new Date();
+
+    this.postRequestHook(resp, params, start_t, end_t);
+    return resp;
+  }
 
   options(url, body, params) {
     return this.request('OPTIONS', url, body, params)
