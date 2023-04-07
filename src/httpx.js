@@ -1,5 +1,8 @@
 import http from 'k6/http';
 
+
+const validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'];
+
 function isHttpUrl(obj){  // detects type of http.url`http://example.com/{$id}`
   return typeof obj == 'object' 
     && 'name' in obj 
@@ -44,6 +47,12 @@ class Get extends Request {
   }
 }
 
+class Head extends Request {
+  constructor(url, params) {
+    super('HEAD', url, params)
+  }
+}
+
 class Post extends Request {
   constructor(url, params) {
     super('POST', url, params)
@@ -56,9 +65,15 @@ class Put extends Request {
   }
 }
 
-class Patch extends Request {
+class Delete extends Request {
   constructor(url, params) {
-    super('PATCH', url, params)
+    super('DELETE', url, params)
+  }
+}
+
+class Connect extends Request {
+  constructor(url, params) {
+    super('CONNECT', url, params)
   }
 }
 
@@ -68,9 +83,15 @@ class Options extends Request {
   }
 }
 
-class Delete extends Request {
+class Trace extends Request {
   constructor(url, params) {
-    super('DELETE', url, params)
+    super('TRACE', url, params)
+  }
+}
+
+class Patch extends Request {
+  constructor(url, params) {
+    super('PATCH', url, params)
   }
 }
 
@@ -176,8 +197,17 @@ class Httpx {
     return this.request(r.method, r.url, r.body, r.params);
   }
 
+  validateMethod(method) {
+    if (!validMethods.includes(method))
+      throw new Error(`Invalid method: ${method}. Expected one of ${validMethods}`);
+  }
+
   request(method, url, body, params) {
-    // console.log(`start ${method} ${url}`)
+    if(arguments.length < 2){
+      throw new Error("Invalid number of arguments for asyncRequest. Provide at least Method and URL.");
+    }
+
+    this.validateMethod(method);
 
     params = this._getMergedSessionParams(params);
 
@@ -197,7 +227,14 @@ class Httpx {
     this.postRequestHook(resp, params, start_t, end_t);
     return resp;
   }
-  async asyncRequest(method, url, body, params) {
+
+  asyncRequest(method, url, body, params) {
+    if(arguments.length < 2){
+      throw new Error("Invalid number of arguments for asyncRequest. Provide at least Method and URL.");
+    }
+
+    this.validateMethod(method);
+
     params = this._getMergedSessionParams(params);
 
     if (isHttpUrl(url)) {
@@ -209,18 +246,11 @@ class Httpx {
         url = this.baseURL + url;
     }
 
-    let start_t = new Date();
-    let resp = await http.asyncRequest(method, url, body, params);
-    let end_t = new Date();
-
-    this.postRequestHook(resp, params, start_t, end_t);
-    return resp;
+    let promise = http.asyncRequest(method, url, body, params);
+    return promise;
   }
 
-  options(url, body, params) {
-    return this.request('OPTIONS', url, body, params)
-  }
-
+  // synchronous helpers, don't need to be awaited.
   get(url, body, params) {
     return this.request('GET', url, body, params)
   }
@@ -241,12 +271,57 @@ class Httpx {
     return this.request('DELETE', url, body, params)
   }
 
+  connect(url, body, params) {
+    return this.request('CONNECT', url, body, params)
+  }
+
+  options(url, body, params) {
+    return this.request('OPTIONS', url, body, params)
+  }
+
   trace(url, body, params) {
     return this.request('TRACE', url, body, params)
   }
 
   patch(url, body, params) {
     return this.request('PATCH', url, body, params)
+  }
+
+  // async helpers, returning promises. Must be awaited on the client side.
+  asyncGet(url, body, params) {
+    return this.asyncRequest('GET', url, body, params)
+  }
+
+  asyncHead(url, body, params) {
+    return this.asyncRequest('HEAD', url, body, params)
+  }
+
+  asyncPost(url, body, params) {
+    return this.asyncRequest('POST', url, body, params)
+  }
+
+  asyncPut(url, body, params) {
+    return this.asyncRequest('PUT', url, body, params)
+  }
+
+  asyncDelete(url, body, params) {
+    return this.asyncRequest('DELETE', url, body, params)
+  }
+
+  asyncConnect(url, body, params) {
+    return this.asyncRequest('CONNECT', url, body, params)
+  }
+
+  asyncOptions(url, body, params) {
+    return this.asyncRequest('OPTIONS', url, body, params)
+  }
+
+  asyncTrace(url, body, params) {
+    return this.asyncRequest('TRACE', url, body, params)
+  }
+
+  asyncPatch(url, body, params) {
+    return this.asyncRequest('PATCH', url, body, params)
   }
 
   batch(array_of_requests, batch_shared_params) { // common_params
@@ -283,11 +358,14 @@ class Httpx {
 
 export {
   Httpx,
+  Request,
   Get,
+  Head,
   Post,
   Put,
-  Patch,
   Delete,
+  Connect,
   Options,
-  Request
+  Trace,
+  Patch,
 }
