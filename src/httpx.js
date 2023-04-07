@@ -204,7 +204,7 @@ class Httpx {
 
   request(method, url, body, params) {
     if(arguments.length < 2){
-      throw new Error("Invalid number of arguments for asyncRequest. Provide at least Method and URL.");
+      throw new Error("Invalid number of arguments for request(). Provide at least Method and URL.");
     }
 
     this.validateMethod(method);
@@ -230,7 +230,7 @@ class Httpx {
 
   asyncRequest(method, url, body, params) {
     if(arguments.length < 2){
-      throw new Error("Invalid number of arguments for asyncRequest. Provide at least Method and URL.");
+      throw new Error("Invalid number of arguments for asyncRequest(). Provide at least Method and URL.");
     }
 
     this.validateMethod(method);
