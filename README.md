@@ -1,7 +1,7 @@
 # k6-jslib-httpx
 httpx JavaScript library 
 
-Docs: http://k6.io/docs/javascript-api/jslib/httpx
+Docs: https://grafana.com/docs/k6/latest/javascript-api/jslib/httpx
 
 Download the latest release from https://jslib.k6.io/
 
