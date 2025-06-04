@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: k6-jslib-httpx
+  title: k6-jslib-httpx
+  description: |
+    httpx JavaScript library
+  annotations:
+    github.com/project-slug: grafana/k6-jslib-httpx
+spec:
+  type: library
+  owner: group:default/k6-core
+  lifecycle: production
