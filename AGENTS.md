@@ -18,3 +18,4 @@ Batch requests always prepend baseURL to every element. They bypass the per-requ
 - `asyncRequest` does NOT run the post-request hook (no error metric, no lastRequest update). Only sync `request` does. Easy to miss since async helpers look like mirrors of the sync ones.
 - The constructor destructures known keys from opts then assigns the leftover opts object as extra k6 params. It mutates the caller's original opts via `delete`, so re-using that object will be missing keys.
 - Per-request headers/tags merge additively with session defaults. There is no way to suppress a session-level header for a single request -- you can only override its value, not remove it.
+- Security issues should be reported via [Grafana's security issue reporting page](https://grafana.com/legal/report-a-security-issue/) and not directly in this repository.
